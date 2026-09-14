@@ -48,6 +48,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 
+    @ExceptionHandler(EstadoInvalidoException.class)
+    public ResponseEntity<ErrorResponse> handleEstadoInvalido(EstadoInvalidoException ex) {
+        ErrorResponse body = new ErrorResponse(
+                HttpStatus.CONFLICT.value(),
+                "Conflict",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidacion(MethodArgumentNotValidException ex) {
         Map<String, String> errores = new HashMap<>();
