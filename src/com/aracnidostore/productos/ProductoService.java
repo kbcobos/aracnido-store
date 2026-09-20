@@ -8,7 +8,10 @@ public class ProductoService {
     private final List<Producto> productos = new ArrayList<>();
 
     public Producto agregar(String nombre, double precio, int stock) {
-        Producto producto = new Producto(nombre, precio, stock);
+        return agregar(new Producto(nombre, precio, stock));
+    }
+
+    public Producto agregar(Producto producto) {
         productos.add(producto);
         return producto;
     }
