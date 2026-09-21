@@ -6,15 +6,18 @@ import com.aracnidostore.productos.Comida;
 import com.aracnidostore.productos.Producto;
 import com.aracnidostore.productos.ProductoService;
 
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Charset codificacionConsola = Charset.forName(System.getProperty("native.encoding"));
+        Scanner scanner = new Scanner(System.in, codificacionConsola);
         ProductoService productoService = new ProductoService();
         PedidoService pedidoService = new PedidoService(productoService);
+        DatosEjemplo.cargar(productoService, pedidoService);
 
         boolean salir = false;
 
@@ -49,7 +52,7 @@ public class Main {
     }
 
     private static void mostrarMenu() {
-        System.out.println("=================================== SISTEMA DE GESTIÓN - ARÁCNIDO STORE ==================================");
+        System.out.println("========== SISTEMA DE GESTIÓN - ARÁCNIDO STORE ==========");
         System.out.println();
         System.out.println("1) Agregar producto");
         System.out.println("2) Listar productos");
