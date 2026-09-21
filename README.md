@@ -1,6 +1,6 @@
 # Arácnido Store — Sistema de Gestión
 
-Aplicación en **Java puro** para gestionar un catálogo de productos y crear pedidos, desarrollada como preentrega de la materia de backend.
+Aplicación de **Java puro** para gestionar un catálogo de productos y crear pedidos, desarrollada como preentrega de la materia de backend.
 
 ## Requisitos cumplidos
 
@@ -17,11 +17,15 @@ Aplicación en **Java puro** para gestionar un catálogo de productos y crear pe
 
 **Desde la terminal**, parado en la carpeta `src/`:
 ```bash
-javac -d ../out Main.java com/aracnidostore/productos/*.java com/aracnidostore/pedidos/*.java com/aracnidostore/excepciones/*.java
+javac -d ../out Main.java DatosEjemplo.java com/aracnidostore/productos/*.java com/aracnidostore/pedidos/*.java com/aracnidostore/excepciones/*.java
 java -cp ../out Main
 ```
 
 Requiere Java 18 o superior.
+
+## Catálogo de ejemplo
+
+Al arrancar, `DatosEjemplo.java` precarga automáticamente un catálogo con temática del universo arácnido (héroes y villanos incluidos) y tres pedidos ya confirmados — uno genérico, uno de comida y uno de bebidas —, así que las opciones 2 y 6 del menú ya muestran datos desde el primer momento, sin necesidad de cargar nada a mano.
 
 ## Menú
 
