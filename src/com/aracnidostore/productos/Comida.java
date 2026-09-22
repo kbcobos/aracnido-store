@@ -9,6 +9,11 @@ public class Comida extends Producto {
         this.fechaVencimiento = fechaVencimiento;
     }
 
+    public Comida(int id, String nombre, double precio, int stock, String fechaVencimiento) {
+        super(id, nombre, precio, stock);
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
     public String getFechaVencimiento() {
         return fechaVencimiento;
     }
@@ -20,5 +25,10 @@ public class Comida extends Producto {
     @Override
     public String toString() {
         return super.toString() + " | Tipo: Comida | Vence: " + fechaVencimiento;
+    }
+
+    @Override
+    public String toFileString() {
+        return "COMIDA|" + getId() + "|" + getNombre() + "|" + getPrecio() + "|" + getStock() + "|" + fechaVencimiento;
     }
 }

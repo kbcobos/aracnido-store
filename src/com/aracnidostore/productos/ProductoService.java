@@ -75,4 +75,19 @@ public class ProductoService {
             producto.setStock(producto.getStock() - cantidad);
         }
     }
+
+    public void guardarEnArchivo(String ruta) {
+        ProductoPersistencia.guardar(productos, ruta);
+    }
+
+    public boolean cargarDesdeArchivo(String ruta) {
+        List<Producto> cargados = ProductoPersistencia.cargar(ruta);
+        if (cargados == null) {
+            return false;
+        }
+        for (Producto producto : cargados) {
+            agregar(producto);
+        }
+        return true;
+    }
 }

@@ -16,6 +16,16 @@ public class Producto {
         this.stock = stock;
     }
 
+    public Producto(int id, String nombre, double precio, int stock) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.stock = stock;
+        if (id >= contador) {
+            contador = id + 1;
+        }
+    }
+
     public int getId() {
         return id;
     }
@@ -50,5 +60,9 @@ public class Producto {
                 " | Nombre: " + nombre +
                 " | Precio: $" + precio +
                 " | Stock: " + stock;
+    }
+
+    public String toFileString() {
+        return "PRODUCTO|" + id + "|" + nombre + "|" + precio + "|" + stock;
     }
 }

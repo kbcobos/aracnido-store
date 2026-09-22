@@ -9,6 +9,11 @@ public class Bebida extends Producto {
         this.volumenLitros = volumenLitros;
     }
 
+    public Bebida(int id, String nombre, double precio, int stock, double volumenLitros) {
+        super(id, nombre, precio, stock);
+        this.volumenLitros = volumenLitros;
+    }
+
     public double getVolumenLitros() {
         return volumenLitros;
     }
@@ -20,5 +25,10 @@ public class Bebida extends Producto {
     @Override
     public String toString() {
         return super.toString() + " | Tipo: Bebida | Volumen: " + volumenLitros + "L";
+    }
+
+    @Override
+    public String toFileString() {
+        return "BEBIDA|" + getId() + "|" + getNombre() + "|" + getPrecio() + "|" + getStock() + "|" + volumenLitros;
     }
 }
