@@ -41,4 +41,19 @@ public class PedidoService {
     public List<Pedido> listar() {
         return pedidos;
     }
+
+    public void guardarEnArchivo(String ruta) {
+        PedidoPersistencia.guardar(pedidos, ruta);
+    }
+
+    public boolean cargarDesdeArchivo(String ruta) {
+        List<Pedido> cargados = PedidoPersistencia.cargar(ruta, productoService);
+        if (cargados == null) {
+            return false;
+        }
+        for (Pedido pedido : cargados) {
+            confirmar(pedido);
+        }
+        return true;
+    }
 }

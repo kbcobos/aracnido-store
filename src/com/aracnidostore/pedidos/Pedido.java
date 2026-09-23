@@ -14,6 +14,13 @@ public class Pedido {
         this.id = contador++;
     }
 
+    public Pedido(int id) {
+        this.id = id;
+        if (id >= contador) {
+            contador = id + 1;
+        }
+    }
+
     public int getId() {
         return id;
     }
