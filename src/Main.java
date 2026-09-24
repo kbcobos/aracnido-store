@@ -12,12 +12,23 @@ import java.util.Scanner;
 
 public class Main {
 
+    private static final String RUTA_PRODUCTOS = "productos.txt";
+    private static final String RUTA_PEDIDOS = "pedidos.txt";
+
     public static void main(String[] args) {
         Charset codificacionConsola = Charset.forName(System.getProperty("native.encoding"));
         Scanner scanner = new Scanner(System.in, codificacionConsola);
         ProductoService productoService = new ProductoService();
         PedidoService pedidoService = new PedidoService(productoService);
-        DatosEjemplo.cargar(productoService, pedidoService);
+
+        boolean habiaDatosGuardados = productoService.cargarDesdeArchivo(RUTA_PRODUCTOS);
+        if (habiaDatosGuardados) {
+            pedidoService.cargarDesdeArchivo(RUTA_PEDIDOS);
+            System.out.println("Catálogo y pedidos cargados desde la ejecución anterior.");
+            System.out.println();
+        } else {
+            DatosEjemplo.cargar(productoService, pedidoService);
+        }
 
         boolean salir = false;
 
@@ -37,7 +48,9 @@ public class Main {
                     case 6 -> listarPedidos(pedidoService);
                     case 7 -> {
                         salir = true;
-                        System.out.println("¡Gracias por usar Arácnido Store!");
+                        productoService.guardarEnArchivo(RUTA_PRODUCTOS);
+                        pedidoService.guardarEnArchivo(RUTA_PEDIDOS);
+                        System.out.println("Datos guardados. ¡Gracias por usar Arácnido Store!");
                     }
                     default -> System.out.println("Opción inválida. Elija un número del 1 al 7.");
                 }
@@ -154,7 +167,6 @@ public class Main {
             int id = Integer.parseInt(texto);
             producto = productoService.buscarPorId(id);
         } catch (NumberFormatException e) {
-            // No era un número: se busca por nombre en su lugar.
             producto = productoService.buscarPorNombre(texto);
         }
 

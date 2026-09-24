@@ -1,0 +1,12 @@
+out/
+*.class
+
+productos.txt
+pedidos.txt
+
+.vscode/
+
+.DS_Store
+Thumbs.db
+
+*.log
