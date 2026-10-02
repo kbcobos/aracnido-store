@@ -5,7 +5,9 @@ import com.aracnidostore.productos.Producto;
 import com.aracnidostore.productos.ProductoService;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PedidoService {
 
@@ -55,5 +57,37 @@ public class PedidoService {
             confirmar(pedido);
         }
         return true;
+    }
+
+    public double totalFacturado() {
+        double total = 0;
+        for (Pedido pedido : pedidos) {
+            total += pedido.calcularTotal();
+        }
+        return total;
+    }
+
+    public Producto productoMasPedido() {
+        Map<Producto, Integer> totalesPorProducto = new HashMap<>();
+
+        for (Pedido pedido : pedidos) {
+            for (LineaPedido linea : pedido.getLineas()) {
+                Producto producto = linea.getProducto();
+                int cantidadAcumulada = totalesPorProducto.getOrDefault(producto, 0);
+                totalesPorProducto.put(producto, cantidadAcumulada + linea.getCantidad());
+            }
+        }
+
+        Producto masPedido = null;
+        int maxCantidad = 0;
+
+        for (Map.Entry<Producto, Integer> entrada : totalesPorProducto.entrySet()) {
+            if (entrada.getValue() > maxCantidad) {
+                maxCantidad = entrada.getValue();
+                masPedido = entrada.getKey();
+            }
+        }
+
+        return masPedido;
     }
 }

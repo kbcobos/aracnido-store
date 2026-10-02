@@ -46,16 +46,17 @@ public class Main {
                     case 4 -> eliminarProducto(scanner, productoService);
                     case 5 -> crearPedido(scanner, pedidoService);
                     case 6 -> listarPedidos(pedidoService);
-                    case 7 -> {
+                    case 7 -> mostrarEstadisticas(productoService, pedidoService);
+                    case 8 -> {
                         salir = true;
                         productoService.guardarEnArchivo(RUTA_PRODUCTOS);
                         pedidoService.guardarEnArchivo(RUTA_PEDIDOS);
                         System.out.println("Datos guardados. ¡Gracias por usar Arácnido Store!");
                     }
-                    default -> System.out.println("Opción inválida. Elija un número del 1 al 7.");
+                    default -> System.out.println("Opción inválida. Elija un número del 1 al 8.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Ingrese un número del 1 al 7.");
+                System.out.println("Entrada inválida. Ingrese un número del 1 al 8.");
             }
 
             System.out.println();
@@ -73,7 +74,8 @@ public class Main {
         System.out.println("4) Eliminar producto");
         System.out.println("5) Crear un pedido");
         System.out.println("6) Listar pedidos");
-        System.out.println("7) Salir");
+        System.out.println("7) Ver estadísticas");
+        System.out.println("8) Salir");
         System.out.println();
         System.out.print("Elija una opción: ");
     }
@@ -281,6 +283,19 @@ public class Main {
         for (Pedido pedido : pedidos) {
             System.out.println(pedido);
             System.out.println();
+        }
+    }
+
+    private static void mostrarEstadisticas(ProductoService productoService, PedidoService pedidoService) {
+        System.out.println("--- Estadísticas ---");
+        System.out.printf("Valor total del inventario: $%.2f%n", productoService.valorTotalInventario());
+        System.out.printf("Total facturado (todos los pedidos): $%.2f%n", pedidoService.totalFacturado());
+
+        Producto masPedido = pedidoService.productoMasPedido();
+        if (masPedido != null) {
+            System.out.println("Producto más pedido: " + masPedido.getNombre());
+        } else {
+            System.out.println("Producto más pedido: todavía no hay pedidos registrados.");
         }
     }
 }

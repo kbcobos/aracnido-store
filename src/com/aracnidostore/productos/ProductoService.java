@@ -90,4 +90,12 @@ public class ProductoService {
         }
         return true;
     }
+
+    public double valorTotalInventario() {
+        double total = 0;
+        for (Producto producto : productos) {
+            total += producto.getPrecio() * producto.getStock();
+        }
+        return total;
+    }
 }
