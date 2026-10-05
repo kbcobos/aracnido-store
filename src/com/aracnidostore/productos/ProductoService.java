@@ -1,6 +1,7 @@
 package com.aracnidostore.productos;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ProductoService {
@@ -89,6 +90,24 @@ public class ProductoService {
             agregar(producto);
         }
         return true;
+    }
+
+    public List<Producto> listarOrdenadoPorNombre() {
+        List<Producto> copia = new ArrayList<>(productos);
+        copia.sort(Comparator.comparing(Producto::getNombre, String.CASE_INSENSITIVE_ORDER));
+        return copia;
+    }
+
+    public List<Producto> listarOrdenadoPorPrecio() {
+        List<Producto> copia = new ArrayList<>(productos);
+        copia.sort(Comparator.comparingDouble(Producto::getPrecio));
+        return copia;
+    }
+
+    public List<Producto> listarOrdenadoPorStock() {
+        List<Producto> copia = new ArrayList<>(productos);
+        copia.sort(Comparator.comparingInt(Producto::getStock));
+        return copia;
     }
 
     public double valorTotalInventario() {

@@ -41,7 +41,7 @@ public class Main {
 
                 switch (opcion) {
                     case 1 -> agregarProducto(scanner, productoService);
-                    case 2 -> listarProductos(productoService);
+                    case 2 -> listarProductos(scanner, productoService);
                     case 3 -> buscarActualizarProducto(scanner, productoService);
                     case 4 -> eliminarProducto(scanner, productoService);
                     case 5 -> crearPedido(scanner, pedidoService);
@@ -146,13 +146,22 @@ public class Main {
         return new Comida(nombre, precio, stock, fechaVencimiento);
     }
 
-    private static void listarProductos(ProductoService productoService) {
-        List<Producto> productos = productoService.listar();
-
-        if (productos.isEmpty()) {
+    private static void listarProductos(Scanner scanner, ProductoService productoService) {
+        if (productoService.listar().isEmpty()) {
             System.out.println("No hay productos cargados todavía.");
             return;
         }
+
+        System.out.println("Ordenar por: 1) Sin ordenar   2) Nombre   3) Precio   4) Stock");
+        System.out.print("Elija una opción: ");
+        String criterio = scanner.nextLine().trim();
+
+        List<Producto> productos = switch (criterio) {
+            case "2" -> productoService.listarOrdenadoPorNombre();
+            case "3" -> productoService.listarOrdenadoPorPrecio();
+            case "4" -> productoService.listarOrdenadoPorStock();
+            default -> productoService.listar();
+        };
 
         System.out.println("--- Listado de productos ---");
         for (Producto producto : productos) {
