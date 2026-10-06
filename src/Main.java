@@ -29,7 +29,7 @@ public class Main {
         } else {
             DatosEjemplo.cargar(productoService, pedidoService);
         }
-
+        avisarSiHayStockBajo(productoService);
         boolean salir = false;
 
         while (!salir) {
@@ -44,19 +44,20 @@ public class Main {
                     case 2 -> listarProductos(scanner, productoService);
                     case 3 -> buscarActualizarProducto(scanner, productoService);
                     case 4 -> eliminarProducto(scanner, productoService);
-                    case 5 -> crearPedido(scanner, pedidoService);
+                    case 5 -> crearPedido(scanner, pedidoService, productoService);
                     case 6 -> listarPedidos(pedidoService);
                     case 7 -> mostrarEstadisticas(productoService, pedidoService);
-                    case 8 -> {
+                    case 8 -> mostrarAlertasStockBajo(productoService);
+                    case 9 -> {
                         salir = true;
                         productoService.guardarEnArchivo(RUTA_PRODUCTOS);
                         pedidoService.guardarEnArchivo(RUTA_PEDIDOS);
                         System.out.println("Datos guardados. ¡Gracias por usar Arácnido Store!");
                     }
-                    default -> System.out.println("Opción inválida. Elija un número del 1 al 8.");
+                    default -> System.out.println("Opción inválida. Elija un número del 1 al 9.");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Ingrese un número del 1 al 8.");
+                System.out.println("Entrada inválida. Ingrese un número del 1 al 9.");
             }
 
             System.out.println();
@@ -75,7 +76,8 @@ public class Main {
         System.out.println("5) Crear un pedido");
         System.out.println("6) Listar pedidos");
         System.out.println("7) Ver estadísticas");
-        System.out.println("8) Salir");
+        System.out.println("8) Ver alertas de stock bajo");
+        System.out.println("9) Salir");
         System.out.println();
         System.out.print("Elija una opción: ");
     }
@@ -246,7 +248,7 @@ public class Main {
         }
     }
 
-    private static void crearPedido(Scanner scanner, PedidoService pedidoService) {
+    private static void crearPedido(Scanner scanner, PedidoService pedidoService, ProductoService productoService) {
         Pedido pedido = pedidoService.crearPedidoVacio();
         boolean agregarOtro = true;
 
@@ -278,6 +280,8 @@ public class Main {
         System.out.println();
         System.out.println("Pedido confirmado:");
         System.out.println(pedido);
+        System.out.println();
+        avisarSiHayStockBajo(productoService);
     }
 
     private static void listarPedidos(PedidoService pedidoService) {
@@ -306,5 +310,37 @@ public class Main {
         } else {
             System.out.println("Producto más pedido: todavía no hay pedidos registrados.");
         }
+    }
+
+    private static void mostrarAlertasStockBajo(ProductoService productoService) {
+        List<Producto> stockBajo = productoService.listarStockBajo();
+
+        System.out.println("--- Alertas de stock bajo (umbral: " + ProductoService.UMBRAL_STOCK_BAJO_DEFAULT + " unidades) ---");
+
+        if (stockBajo.isEmpty()) {
+            System.out.println("Todo el catálogo tiene stock por encima del umbral. Sin alertas.");
+            return;
+        }
+
+        for (Producto producto : stockBajo) {
+            String etiqueta = producto.getStock() == 0 ? "¡AGOTADO!" : "stock bajo";
+            System.out.printf("[%s] %s (ID %d) — quedan %d unidades%n",
+                    etiqueta, producto.getNombre(), producto.getId(), producto.getStock());
+        }
+    }
+
+    private static void avisarSiHayStockBajo(ProductoService productoService) {
+        List<Producto> stockBajo = productoService.listarStockBajo();
+        if (stockBajo.isEmpty()) {
+            return;
+        }
+
+        System.out.println("  Aviso: " + stockBajo.size() + " producto(s) con stock bajo o agotado:");
+        for (Producto producto : stockBajo) {
+            String etiqueta = producto.getStock() == 0 ? "AGOTADO" : "bajo";
+            System.out.println("   - " + producto.getNombre() + " (ID " + producto.getId() + "): " + producto.getStock() + " unidades [" + etiqueta + "]");
+        }
+        System.out.println("   (Ver opción 8 del menú para el detalle completo.)");
+        System.out.println();
     }
 }

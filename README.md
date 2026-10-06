@@ -10,16 +10,14 @@ Aplicación de **Java puro** para gestionar un catálogo de productos y crear pe
 - **Herencia y polimorfismo**: `Bebida` y `Comida` extienden `Producto`, cada una con su atributo propio (`volumenLitros` y `fechaVencimiento`), y se listan de forma genérica junto a los productos comunes.
 - **Excepciones**: `try/catch` para `NumberFormatException` en cada lectura de datos por consola, y la excepción personalizada `StockInsuficienteException` (checked) al crear un pedido sin stock suficiente.
 - **Paquetes**: código organizado en `com.aracnidostore.productos`, `com.aracnidostore.pedidos` y `com.aracnidostore.excepciones`.
+- **Persistencia en archivo de texto**: el catálogo y los pedidos se guardan en `productos.txt` y `pedidos.txt` al salir, y se recargan automáticamente la próxima vez que se ejecuta el programa.
+- **Estadísticas simples**: valor total del inventario, total facturado y producto más pedido (opción 7).
+- **Ordenar el listado de productos**: por nombre, precio o stock (opción 2).
+- **Alertas de stock bajo automáticas**: aviso al arrancar el programa y después de confirmar un pedido, más un panel de detalle (opción 8) con todos los productos en stock bajo o agotado.
 
 ## Cómo correrlo
 
-**Desde VS Code**: abrir la carpeta del proyecto, abrir `src/Main.java` y usar el botón "Run" que aparece arriba del método `main`.
-
-**Desde la terminal**, parado en la carpeta `src/`:
-```bash
-javac -d ../out Main.java DatosEjemplo.java com/aracnidostore/productos/*.java com/aracnidostore/pedidos/*.java com/aracnidostore/excepciones/*.java
-java -cp ../out Main
-```
+**Desde VS Code**: abrir la carpeta del proyecto, abrir `src/Main.java` y usar el botón "Run".
 
 Requiere Java 18 o superior.
 
@@ -38,5 +36,9 @@ Al arrancar, `DatosEjemplo.java` precarga automáticamente un catálogo con tem�
 4) Eliminar producto
 5) Crear un pedido
 6) Listar pedidos
-7) Salir
+7) Ver estadísticas
+8) Ver alertas de stock bajo
+9) Salir
 ```
+
+El sistema también avisa **automáticamente** (sin tener que entrar a la opción 8) cuando algún producto queda en zona de stock bajo: al arrancar el programa, y justo después de confirmar un pedido que haga bajar el stock de algo.

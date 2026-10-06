@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class ProductoService {
+    public static final int UMBRAL_STOCK_BAJO_DEFAULT = 5;
 
     private final List<Producto> productos = new ArrayList<>();
 
@@ -116,5 +117,20 @@ public class ProductoService {
             total += producto.getPrecio() * producto.getStock();
         }
         return total;
+    }
+
+    public List<Producto> listarStockBajo(int umbral) {
+        List<Producto> stockBajo = new ArrayList<>();
+        for (Producto producto : productos) {
+            if (producto.getStock() <= umbral) {
+                stockBajo.add(producto);
+            }
+        }
+        stockBajo.sort(Comparator.comparingInt(Producto::getStock));
+        return stockBajo;
+    }
+
+    public List<Producto> listarStockBajo() {
+        return listarStockBajo(UMBRAL_STOCK_BAJO_DEFAULT);
     }
 }
