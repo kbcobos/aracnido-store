@@ -1,5 +1,11 @@
-package com.aracnidostore.productos;
+package model;
 
+/**
+ * Representa un producto del catálogo. El id se autogenera con un
+ * contador estático: cada vez que se crea un Producto nuevo, toma el
+ * valor actual del contador y lo incrementa para el próximo — así nunca
+ * se repite un id, sin que haya que pasarlo a mano al crear el objeto.
+ */
 public class Producto {
 
     private static int contador = 1;
@@ -16,6 +22,13 @@ public class Producto {
         this.stock = stock;
     }
 
+    /**
+     * Constructor con id explícito: lo usa ProductoPersistencia al
+     * reconstruir productos guardados en un archivo, para que conserven
+     * el mismo id que tenían antes de guardarse (necesario para que los
+     * pedidos guardados, que referencian productos por id, sigan
+     * apuntando al producto correcto al recargar).
+     */
     public Producto(int id, String nombre, double precio, int stock) {
         this.id = id;
         this.nombre = nombre;
@@ -25,6 +38,8 @@ public class Producto {
             contador = id + 1;
         }
     }
+
+    // "id" no tiene setter: una vez creado el producto, su id no cambia.
 
     public int getId() {
         return id;
@@ -62,6 +77,9 @@ public class Producto {
                 " | Stock: " + stock;
     }
 
+    /**
+     * Representación en una línea de texto, separada por "|", para guardar en archivo.
+     */
     public String toFileString() {
         return "PRODUCTO|" + id + "|" + nombre + "|" + precio + "|" + stock;
     }

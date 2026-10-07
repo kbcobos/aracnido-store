@@ -1,5 +1,9 @@
-package com.aracnidostore.productos;
+package model;
 
+/**
+ * Ejemplo de herencia/polimorfismo.
+ * Una Comida es un Producto que además tiene fecha de vencimiento.
+ */
 public class Comida extends Producto {
 
     private String fechaVencimiento;
@@ -9,6 +13,8 @@ public class Comida extends Producto {
         this.fechaVencimiento = fechaVencimiento;
     }
 
+    // Constructor con id explícito, usado por ProductoPersistencia al
+    // reconstruir una Comida guardada en archivo.
     public Comida(int id, String nombre, double precio, int stock, String fechaVencimiento) {
         super(id, nombre, precio, stock);
         this.fechaVencimiento = fechaVencimiento;

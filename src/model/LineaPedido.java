@@ -1,7 +1,9 @@
-package com.aracnidostore.pedidos;
+package model;
 
-import com.aracnidostore.productos.Producto;
-
+/**
+ * Representa un ítem dentro de un Pedido: un Producto puntual y la
+ * cantidad pedida de ese producto.
+ */
 public class LineaPedido {
 
     private final Producto producto;

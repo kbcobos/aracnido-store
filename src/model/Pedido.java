@@ -1,8 +1,12 @@
-package com.aracnidostore.pedidos;
+package model;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Representa un pedido: un id autogenerado y una lista de líneas,
+ * cada una con su producto y cantidad.
+ */
 public class Pedido {
 
     private static int contador = 1;
@@ -14,6 +18,7 @@ public class Pedido {
         this.id = contador++;
     }
 
+    // Constructor con id explícito, usado por PedidoPersistencia al reconstruir un pedido guardado en archivo.
     public Pedido(int id) {
         this.id = id;
         if (id >= contador) {
@@ -33,6 +38,9 @@ public class Pedido {
         lineas.add(linea);
     }
 
+    /**
+     * Suma el subtotal de cada línea para obtener el costo total del pedido.
+     */
     public double calcularTotal() {
         double total = 0;
         for (LineaPedido linea : lineas) {
