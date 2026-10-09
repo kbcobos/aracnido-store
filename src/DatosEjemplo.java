@@ -1,10 +1,11 @@
-import com.aracnidostore.excepciones.StockInsuficienteException;
-import com.aracnidostore.pedidos.Pedido;
-import com.aracnidostore.pedidos.PedidoService;
-import com.aracnidostore.productos.Bebida;
-import com.aracnidostore.productos.Comida;
-import com.aracnidostore.productos.Producto;
-import com.aracnidostore.productos.ProductoService;
+import exception.ProductoNoEncontradoException;
+import exception.StockInsuficienteException;
+import model.Bebida;
+import model.Comida;
+import model.Pedido;
+import model.Producto;
+import service.PedidoService;
+import service.ProductoService;
 
 import java.util.List;
 
@@ -59,24 +60,27 @@ public class DatosEjemplo {
                                        List<Bebida> bebidas,
                                        List<Comida> comidas) {
         try {
+            // Pedido genérico: merchandising variado.
             Pedido pedidoGenerico = pedidoService.crearPedidoVacio();
-            pedidoService.agregarLinea(pedidoGenerico, genericos.get(0).getId(), 2);
-            pedidoService.agregarLinea(pedidoGenerico, genericos.get(2).getId(), 3);
-            pedidoService.agregarLinea(pedidoGenerico, genericos.get(1).getId(), 1);
+            pedidoService.agregarLinea(pedidoGenerico, genericos.get(0).getId(), 2); // figura Spider-Man
+            pedidoService.agregarLinea(pedidoGenerico, genericos.get(2).getId(), 3); // llavero Venom
+            pedidoService.agregarLinea(pedidoGenerico, genericos.get(1).getId(), 1); // máscara Miles Morales
             pedidoService.confirmar(pedidoGenerico);
 
+            // Pedido de comida.
             Pedido pedidoComida = pedidoService.crearPedidoVacio();
-            pedidoService.agregarLinea(pedidoComida, comidas.get(0).getId(), 1);
-            pedidoService.agregarLinea(pedidoComida, comidas.get(1).getId(), 2);
+            pedidoService.agregarLinea(pedidoComida, comidas.get(0).getId(), 1); // pizza
+            pedidoService.agregarLinea(pedidoComida, comidas.get(1).getId(), 2); // hamburguesa
             pedidoService.confirmar(pedidoComida);
 
+            // Pedido de bebidas.
             Pedido pedidoBebidas = pedidoService.crearPedidoVacio();
-            pedidoService.agregarLinea(pedidoBebidas, bebidas.get(0).getId(), 4);
-            pedidoService.agregarLinea(pedidoBebidas, bebidas.get(1).getId(), 2);
-            pedidoService.agregarLinea(pedidoBebidas, bebidas.get(2).getId(), 1);
+            pedidoService.agregarLinea(pedidoBebidas, bebidas.get(0).getId(), 4); // refresco
+            pedidoService.agregarLinea(pedidoBebidas, bebidas.get(1).getId(), 2); // café
+            pedidoService.agregarLinea(pedidoBebidas, bebidas.get(2).getId(), 1); // batido
             pedidoService.confirmar(pedidoBebidas);
 
-        } catch (StockInsuficienteException e) {
+        } catch (StockInsuficienteException | ProductoNoEncontradoException e) {
             System.out.println("No se pudieron cargar todos los pedidos de ejemplo: " + e.getMessage());
         }
     }
