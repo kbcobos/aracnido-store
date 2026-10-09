@@ -1,14 +1,18 @@
-package com.aracnidostore.pedidos;
+package service;
 
-import com.aracnidostore.excepciones.StockInsuficienteException;
-import com.aracnidostore.productos.Producto;
-import com.aracnidostore.productos.ProductoService;
+import exception.StockInsuficienteException;
+import model.LineaPedido;
+import model.Pedido;
+import model.Producto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Encapsula la colección de pedidos y la lógica para armarlos.
+ */
 public class PedidoService {
 
     private final List<Pedido> pedidos = new ArrayList<>();
@@ -22,12 +26,14 @@ public class PedidoService {
         return new Pedido();
     }
 
-    public void agregarLinea(Pedido pedido, int productoId, int cantidad) throws StockInsuficienteException {
-        Producto producto = productoService.buscarPorId(productoId);
+    /**
+     * Agrega una línea a un pedido que todavía se está armando.
+     * Pensado para llamarse una vez por cada producto
+     * que el usuario quiera sumar al pedido.
+     */
+    public void agregarLinea(Pedido pedido, int productoId, int cantidad) {
+        Producto producto = productoService.obtenerPorId(productoId);
 
-        if (producto == null) {
-            throw new StockInsuficienteException("No existe un producto con ID " + productoId);
-        }
         if (!productoService.haySuficienteStock(productoId, cantidad)) {
             throw new StockInsuficienteException(producto.getNombre(), producto.getStock(), cantidad);
         }
@@ -36,6 +42,11 @@ public class PedidoService {
         pedido.agregarLinea(new LineaPedido(producto, cantidad));
     }
 
+    /**
+     * Guarda el pedido ya armado en la colección de pedidos confirmados.
+     * El stock de cada línea ya se descontó al llamar a agregarLinea(),
+     * así que acá solo queda registrarlo.
+     */
     public void confirmar(Pedido pedido) {
         pedidos.add(pedido);
     }
@@ -48,6 +59,12 @@ public class PedidoService {
         PedidoPersistencia.guardar(pedidos, ruta);
     }
 
+    /**
+     * Carga pedidos desde un archivo guardado en una ejecución anterior.
+     *
+     * Devuelve true si el archivo existía y se cargó, false si no había
+     * ningún archivo guardado.
+     */
     public boolean cargarDesdeArchivo(String ruta) {
         List<Pedido> cargados = PedidoPersistencia.cargar(ruta, productoService);
         if (cargados == null) {
@@ -59,6 +76,9 @@ public class PedidoService {
         return true;
     }
 
+    /**
+     * Suma el total de todos los pedidos confirmados.
+     */
     public double totalFacturado() {
         double total = 0;
         for (Pedido pedido : pedidos) {
@@ -67,6 +87,11 @@ public class PedidoService {
         return total;
     }
 
+    /**
+     * Recorre todos los pedidos sumando cuántas unidades se pidieron de
+     * cada producto, y devuelve el que tiene el total más alto.
+     * Devuelve null si todavía no hay pedidos.
+     */
     public Producto productoMasPedido() {
         Map<Producto, Integer> totalesPorProducto = new HashMap<>();
 

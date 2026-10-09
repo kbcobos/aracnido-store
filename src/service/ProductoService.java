@@ -1,10 +1,21 @@
-package com.aracnidostore.productos;
+package service;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import exception.ProductoNoEncontradoException;
+import model.Producto;
+import util.Validador;
+
+/**
+ * Encapsula la colección de productos y toda la lógica de negocio para
+ * manipularla: valida los datos antes de guardarlos, busca, actualiza
+ * y elimina.
+ */
 public class ProductoService {
+
+    /** Umbral por defecto (en unidades) para considerar el stock "bajo". */
     public static final int UMBRAL_STOCK_BAJO_DEFAULT = 5;
 
     private final List<Producto> productos = new ArrayList<>();
@@ -13,7 +24,17 @@ public class ProductoService {
         return agregar(new Producto(nombre, precio, stock));
     }
 
+    /**
+     * Agrega un Producto ya construido — funciona igual para un Producto
+     * genérico que para una Bebida o Comida. Antes de
+     * agregarlo, valida que los datos sean coherentes; si no lo son,
+     * lanza una excepción y el producto NO se agrega.
+     */
     public Producto agregar(Producto producto) {
+        Validador.validarNombre(producto.getNombre());
+        Validador.validarPrecio(producto.getPrecio());
+        Validador.validarStock(producto.getStock());
+
         productos.add(producto);
         return producto;
     }
@@ -22,15 +43,23 @@ public class ProductoService {
         return productos;
     }
 
-    public Producto buscarPorId(int id) {
+    /**
+     * Búsqueda por id que garantiza un resultado: si no existe ningún
+     * producto con ese id, lanza ProductoNoEncontradoException en vez de
+     * devolver null.
+     */
+    public Producto obtenerPorId(int id) {
         for (Producto producto : productos) {
             if (producto.getId() == id) {
                 return producto;
             }
         }
-        return null;
+        throw new ProductoNoEncontradoException("No existe un producto con ID " + id);
     }
 
+    /**
+     * Búsqueda por nombre, sin distinguir mayúsculas/minúsculas.
+     */
     public Producto buscarPorNombre(String nombre) {
         for (Producto producto : productos) {
             if (producto.getNombre().equalsIgnoreCase(nombre)) {
@@ -40,59 +69,65 @@ public class ProductoService {
         return null;
     }
 
-    public boolean actualizarPrecio(int id, double nuevoPrecio) {
-        Producto producto = buscarPorId(id);
-        if (producto == null || nuevoPrecio <= 0) {
-            return false;
-        }
+    /** Actualiza el precio de un producto, validando que sea coherente. */
+    public void actualizarPrecio(int id, double nuevoPrecio) {
+        Producto producto = obtenerPorId(id);
+        Validador.validarPrecio(nuevoPrecio);
         producto.setPrecio(nuevoPrecio);
-        return true;
     }
 
-    public boolean actualizarStock(int id, int nuevoStock) {
-        Producto producto = buscarPorId(id);
-        if (producto == null || nuevoStock < 0) {
-            return false;
-        }
+    /** Actualiza el stock de un producto, validando que no sea negativo. */
+    public void actualizarStock(int id, int nuevoStock) {
+        Producto producto = obtenerPorId(id);
+        Validador.validarStock(nuevoStock);
         producto.setStock(nuevoStock);
-        return true;
     }
 
-    public boolean eliminar(int id) {
-        Producto producto = buscarPorId(id);
-        if (producto == null) {
-            return false;
-        }
-        return productos.remove(producto);
+    public void eliminar(int id) {
+        Producto producto = obtenerPorId(id);
+        productos.remove(producto);
     }
 
+    /**
+     * true si el producto tiene stock suficiente para la cantidad
+     * pedida. La usa PedidoService antes de armar un pedido.
+     */
     public boolean haySuficienteStock(int id, int cantidad) {
-        Producto producto = buscarPorId(id);
-        return producto != null && producto.getStock() >= cantidad;
+        Producto producto = obtenerPorId(id);
+        return producto.getStock() >= cantidad;
     }
 
+    /**
+     * Resta stock de un producto.
+     */
     public void descontarStock(int id, int cantidad) {
-        Producto producto = buscarPorId(id);
-        if (producto != null) {
-            producto.setStock(producto.getStock() - cantidad);
-        }
+        Producto producto = obtenerPorId(id);
+        producto.setStock(producto.getStock() - cantidad);
     }
 
     public void guardarEnArchivo(String ruta) {
         ProductoPersistencia.guardar(productos, ruta);
     }
 
+    /**
+     * Carga productos desde un archivo guardado en una ejecución anterior.
+     * Devuelve true si el archivo existía y se cargó, false si no había
+     * ningún archivo.
+     */
     public boolean cargarDesdeArchivo(String ruta) {
         List<Producto> cargados = ProductoPersistencia.cargar(ruta);
         if (cargados == null) {
             return false;
         }
         for (Producto producto : cargados) {
-            agregar(producto);
+            productos.add(producto);
         }
         return true;
     }
 
+    /**
+     * Devuelven una COPIA de la lista, ordenada por el criterio indicado.
+     */
     public List<Producto> listarOrdenadoPorNombre() {
         List<Producto> copia = new ArrayList<>(productos);
         copia.sort(Comparator.comparing(Producto::getNombre, String.CASE_INSENSITIVE_ORDER));
@@ -111,6 +146,10 @@ public class ProductoService {
         return copia;
     }
 
+    /**
+     * Suma precio × stock de cada producto — el valor total, en pesos,
+     * de todo lo que hay cargado en el inventario en este momento.
+     */
     public double valorTotalInventario() {
         double total = 0;
         for (Producto producto : productos) {
@@ -119,6 +158,11 @@ public class ProductoService {
         return total;
     }
 
+    /**
+     * Productos con stock bajo o agotado, para el panel de alertas.
+     * Devuelve una copia ordenada de menor a mayor stock,
+     * así lo más urgente aparece primero.
+     */
     public List<Producto> listarStockBajo(int umbral) {
         List<Producto> stockBajo = new ArrayList<>();
         for (Producto producto : productos) {
@@ -130,6 +174,7 @@ public class ProductoService {
         return stockBajo;
     }
 
+    /** Sobrecarga con el umbral por defecto (5 unidades). */
     public List<Producto> listarStockBajo() {
         return listarStockBajo(UMBRAL_STOCK_BAJO_DEFAULT);
     }

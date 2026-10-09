@@ -1,4 +1,8 @@
-package com.aracnidostore.productos;
+package service;
+
+import model.Bebida;
+import model.Comida;
+import model.Producto;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,8 +14,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Guarda y lee la lista de productos en un archivo de texto plano, con
+ * formato pipe-delimited (una línea por producto, campos separados por "|").
+ */
 public class ProductoPersistencia {
 
+    /**
+     * Guarda la lista de productos en el archivo indicado, una línea por
+     * producto.
+     */
     public static void guardar(List<Producto> productos, String ruta) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(ruta))) {
             for (Producto producto : productos) {
@@ -22,6 +34,10 @@ public class ProductoPersistencia {
         }
     }
 
+    /**
+     * Lee el archivo indicado y reconstruye la lista de productos.
+     * Devuelve null si el archivo no existe.
+     */
     public static List<Producto> cargar(String ruta) {
         if (!Files.exists(Path.of(ruta))) {
             return null;
@@ -47,6 +63,10 @@ public class ProductoPersistencia {
         return productos;
     }
 
+    /**
+     * Reconstruye un Producto a partir de una línea del
+     * archivo, según el "tipo" que quedó guardado al principio de cada línea.
+     */
     private static Producto fromLinea(String linea) {
         String[] campos = linea.split("\\|");
         String tipo = campos[0];
