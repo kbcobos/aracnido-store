@@ -6,10 +6,10 @@ Aplicación de **Java puro** para gestionar un catálogo de productos y crear pe
 
 - **Tipos de datos**: `int` (ids, cantidades, stock), `double` (precios), `String` (nombres/descripciones), `boolean` (control de flujo del menú).
 - **Colecciones**: `ArrayList<Producto>` y `ArrayList<LineaPedido>` / `ArrayList<Pedido>`.
-- **POO**: clases `Producto`, `Pedido`, `LineaPedido`, `ProductoService`, `PedidoService` y `Main`, con encapsulamiento (atributos privados + getters/setters).
+- **POO**: clases `Producto`, `Pedido`, `LineaPedido`, `ProductoService`, `PedidoService`, `MenuProducto`, `MenuPedido` y `Main`, con encapsulamiento (atributos privados + getters/setters) e inyección de dependencias por constructor (`Scanner` y los *services* se crean una sola vez en `Main` y se pasan a los menús).
 - **Herencia y polimorfismo**: `Bebida` y `Comida` extienden `Producto`, cada una con su atributo propio (`volumenLitros` y `fechaVencimiento`), y se listan de forma genérica junto a los productos comunes.
-- **Excepciones**: `try/catch` para `NumberFormatException` en cada lectura de datos por consola, y la excepción personalizada `StockInsuficienteException` (checked) al crear un pedido sin stock suficiente.
-- **Paquetes**: código organizado en `com.aracnidostore.productos`, `com.aracnidostore.pedidos` y `com.aracnidostore.excepciones`.
+- **Excepciones**: dos excepciones personalizadas *unchecked* (`RuntimeException`) — `ProductoNoEncontradoException` (buscar/actualizar/eliminar un producto que no existe) y `StockInsuficienteException` (pedir más cantidad de la que hay en stock, o cargar un stock negativo) —, más `IllegalArgumentException` para datos inválidos (nombre vacío, precio ≤ 0). Las validaciones viven en `util.Validador`; el `try/catch` que las atrapa y muestra el mensaje está centralizado en `Main`.
+- **Paquetes organizados por capa** (no por dominio): `model`, `service`, `ui`, `exception` y `util` — ver estructura abajo.
 - **Persistencia en archivo de texto**: el catálogo y los pedidos se guardan en `productos.txt` y `pedidos.txt` al salir, y se recargan automáticamente la próxima vez que se ejecuta el programa.
 - **Estadísticas simples**: valor total del inventario, total facturado y producto más pedido (opción 7).
 - **Ordenar el listado de productos**: por nombre, precio o stock (opción 2).
