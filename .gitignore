@@ -43,3 +43,6 @@ build/
 # Datos guardados en tiempo de ejecución
 productos.txt
 pedidos.txt
+
+# Configuración local con credenciales (contraseña de MySQL)
+application-local.properties
