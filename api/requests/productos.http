@@ -1,0 +1,52 @@
+### Extensión "REST Client" de VS Code: clic en "Send Request" sobre cada bloque.
+
+### Listar todos
+GET http://localhost:8080/api/productos
+
+### Buscar por nombre
+GET http://localhost:8080/api/productos?nombre=traje
+
+### Obtener uno
+GET http://localhost:8080/api/productos/1
+
+### Obtener uno que no existe (404)
+GET http://localhost:8080/api/productos/999
+
+### Crear (201)
+POST http://localhost:8080/api/productos
+Content-Type: application/json
+
+{
+  "nombre": "Guantes Arácnidos",
+  "descripcion": "Guantes con agarre adhesivo",
+  "precio": 15000,
+  "stock": 10,
+  "imagenUrl": null,
+  "categoriaId": 2
+}
+
+### Crear con datos inválidos (400 con detalle por campo)
+POST http://localhost:8080/api/productos
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "precio": -5,
+  "stock": null
+}
+
+### Actualizar
+PUT http://localhost:8080/api/productos/1
+Content-Type: application/json
+
+{
+  "nombre": "Lanzarredes Mecánico v2",
+  "descripcion": "Versión mejorada",
+  "precio": 52000,
+  "stock": 15,
+  "imagenUrl": null,
+  "categoriaId": 2
+}
+
+### Eliminar (204)
+DELETE http://localhost:8080/api/productos/6
