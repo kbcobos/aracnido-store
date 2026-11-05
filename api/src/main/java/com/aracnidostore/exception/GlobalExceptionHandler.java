@@ -22,7 +22,8 @@ import com.aracnidostore.dto.ErrorResponse;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({ ProductoNoEncontradoException.class, CategoriaNoEncontradaException.class })
+    @ExceptionHandler({ ProductoNoEncontradoException.class, CategoriaNoEncontradaException.class,
+            UsuarioNoEncontradoException.class })
     public ResponseEntity<ErrorResponse> noEncontrado(RuntimeException ex) {
         return construir(HttpStatus.NOT_FOUND, ex.getMessage(), null);
     }
@@ -46,11 +47,16 @@ public class GlobalExceptionHandler {
                 "El parámetro '" + ex.getName() + "' tiene un valor inválido", null);
     }
 
+    @ExceptionHandler(RecursoDuplicadoException.class)
+    public ResponseEntity<ErrorResponse> duplicado(RecursoDuplicadoException ex) {
+        return construir(HttpStatus.CONFLICT, ex.getMessage(), null);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> integridad(DataIntegrityViolationException ex) {
         return construir(HttpStatus.CONFLICT,
                 "La operación viola una restricción de la base de datos "
-                + "(por ejemplo, el producto ya forma parte de un pedido)", null);
+                + "(por ejemplo, el registro está en uso por otros datos)", null);
     }
 
     private ResponseEntity<ErrorResponse> construir(HttpStatus status, String mensaje,

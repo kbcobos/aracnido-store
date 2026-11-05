@@ -1,0 +1,35 @@
+### Listar categorías
+GET http://localhost:8080/api/categorias
+
+### Obtener una
+GET http://localhost:8080/api/categorias/1
+
+### Crear (201)
+POST http://localhost:8080/api/categorias
+Content-Type: application/json
+
+{ "nombre": "Accesorios" }
+
+### Crear repetida (409)
+POST http://localhost:8080/api/categorias
+Content-Type: application/json
+
+{ "nombre": "trajes" }
+
+### Crear sin nombre (400)
+POST http://localhost:8080/api/categorias
+Content-Type: application/json
+
+{ "nombre": "" }
+
+### Actualizar
+PUT http://localhost:8080/api/categorias/4
+Content-Type: application/json
+
+{ "nombre": "Accesorios Arácnidos" }
+
+### Eliminar una categoría vacía (204)
+DELETE http://localhost:8080/api/categorias/4
+
+### Eliminar una categoría con productos (409)
+DELETE http://localhost:8080/api/categorias/1
