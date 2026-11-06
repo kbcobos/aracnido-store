@@ -4,6 +4,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,17 +37,22 @@ public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
+    private final int stockMinimo;
+
+    private static final Logger log = LoggerFactory.getLogger(PedidoService.class);
 
     public PedidoService(PedidoRepository pedidoRepository,
                          UsuarioRepository usuarioRepository,
-                         ProductoRepository productoRepository) {
+                         ProductoRepository productoRepository,
+                         @Value("${aracnido.stock.minimo:5}") int stockMinimo) {
         this.pedidoRepository = pedidoRepository;
         this.usuarioRepository = usuarioRepository;
         this.productoRepository = productoRepository;
+        this.stockMinimo = stockMinimo;
     }
 
     /**
-     * Crea un pedido PENDIENTE y descuenta el stock.
+     * Crea un pedido PENDIENTE y descuenta el stock (como pide la consigna).
      * Es todo-o-nada: si un producto no existe o no alcanza el stock, se
      * lanza una excepción y @Transactional deshace todo, incluidos los
      * descuentos de stock ya hechos a los productos anteriores.
@@ -67,6 +75,11 @@ public class PedidoService {
                 throw new StockInsuficienteException(producto.getNombre(), producto.getStock(), cantidad);
             }
             producto.setStock(producto.getStock() - cantidad);
+            if (producto.getStock() <= stockMinimo) {
+                // Alerta por consola cuando el stock llega al mínimo.
+                log.warn("ALERTA stock bajo: '{}' quedó con {} unidades (mínimo {})",
+                        producto.getNombre(), producto.getStock(), stockMinimo);
+            }
             pedido.agregarLinea(new LineaPedido(producto, cantidad));
         }
         return PedidoResponse.from(pedidoRepository.save(pedido));

@@ -16,4 +16,7 @@ import java.util.List;
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     List<Producto> findByNombreContainingIgnoreCase(String nombre);
+
+    // Productos con stock menor o igual al límite, los más escasos primero.
+    List<Producto> findByStockLessThanEqualOrderByStockAsc(int limite);
 }

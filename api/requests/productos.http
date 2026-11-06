@@ -50,3 +50,9 @@ Content-Type: application/json
 
 ### Eliminar (204)
 DELETE http://localhost:8080/api/productos/6
+
+### Alerta: productos con stock bajo (usa el mínimo configurado, 5)
+GET http://localhost:8080/api/productos/stock-bajo
+
+### Alerta con límite propio
+GET http://localhost:8080/api/productos/stock-bajo?limite=10

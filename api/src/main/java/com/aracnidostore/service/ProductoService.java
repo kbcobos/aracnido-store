@@ -2,6 +2,7 @@ package com.aracnidostore.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +23,26 @@ public class ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final int stockMinimo;
 
-    // Spring inyecta las dependencias por constructor.
+    // Spring inyecta las dependencias por constructor. @Value lee el umbral
+    // de stock mínimo desde application.properties (aracnido.stock.minimo).
     public ProductoService(ProductoRepository productoRepository,
-                           CategoriaRepository categoriaRepository) {
+                           CategoriaRepository categoriaRepository,
+                           @Value("${aracnido.stock.minimo:5}") int stockMinimo) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.stockMinimo = stockMinimo;
+    }
+
+    /**
+     * Alerta de stock bajo: productos con stock menor o igual al límite.
+     * Si no se indica límite, usa el mínimo configurado.
+     */
+    @Transactional(readOnly = true)
+    public List<Producto> stockBajo(Integer limite) {
+        int umbral = (limite != null) ? limite : stockMinimo;
+        return productoRepository.findByStockLessThanEqualOrderByStockAsc(umbral);
     }
 
     @Transactional(readOnly = true)
