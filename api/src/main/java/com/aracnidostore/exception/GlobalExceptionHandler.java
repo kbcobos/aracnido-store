@@ -23,7 +23,7 @@ import com.aracnidostore.dto.ErrorResponse;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({ ProductoNoEncontradoException.class, CategoriaNoEncontradaException.class,
-            UsuarioNoEncontradoException.class })
+            UsuarioNoEncontradoException.class, PedidoNoEncontradoException.class })
     public ResponseEntity<ErrorResponse> noEncontrado(RuntimeException ex) {
         return construir(HttpStatus.NOT_FOUND, ex.getMessage(), null);
     }
@@ -45,6 +45,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> tipoInvalido(MethodArgumentTypeMismatchException ex) {
         return construir(HttpStatus.BAD_REQUEST,
                 "El parámetro '" + ex.getName() + "' tiene un valor inválido", null);
+    }
+
+    @ExceptionHandler(StockInsuficienteException.class)
+    public ResponseEntity<ErrorResponse> sinStock(StockInsuficienteException ex) {
+        return construir(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler(TransicionEstadoInvalidaException.class)
+    public ResponseEntity<ErrorResponse> transicionInvalida(TransicionEstadoInvalidaException ex) {
+        return construir(HttpStatus.CONFLICT, ex.getMessage(), null);
     }
 
     @ExceptionHandler(RecursoDuplicadoException.class)

@@ -1,0 +1,81 @@
+### Requisitos: usuario con id 1 (ver usuarios.http) y productos con id 1 y 2
+### (los de DataLoader). Corré los bloques en orden y mirá el stock en
+### GET /api/productos entre uno y otro.
+
+### Crear pedido (201): queda PENDIENTE y descuenta stock
+POST http://localhost:8080/api/pedidos
+Content-Type: application/json
+
+{
+  "usuarioId": 1,
+  "itemsPedido": [
+    { "productoId": 1, "cantidad": 2 },
+    { "productoId": 2, "cantidad": 1 }
+  ]
+}
+
+### Stock insuficiente (400)
+POST http://localhost:8080/api/pedidos
+Content-Type: application/json
+
+{
+  "usuarioId": 1,
+  "itemsPedido": [ { "productoId": 1, "cantidad": 9999 } ]
+}
+
+### Usuario inexistente (404)
+POST http://localhost:8080/api/pedidos
+Content-Type: application/json
+
+{
+  "usuarioId": 999,
+  "itemsPedido": [ { "productoId": 1, "cantidad": 1 } ]
+}
+
+### Pedido vacío / cantidad inválida (400 con detalle)
+POST http://localhost:8080/api/pedidos
+Content-Type: application/json
+
+{
+  "usuarioId": 1,
+  "itemsPedido": []
+}
+
+### Listar todos los pedidos
+GET http://localhost:8080/api/pedidos
+
+### Ver un pedido
+GET http://localhost:8080/api/pedidos/1
+
+### Historial del usuario 1
+GET http://localhost:8080/api/usuarios/1/pedidos
+
+### Confirmar (PENDIENTE -> CONFIRMADO)
+PATCH http://localhost:8080/api/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "CONFIRMADO" }
+
+### Transición inválida (CONFIRMADO -> ENTREGADO) (409)
+PATCH http://localhost:8080/api/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "ENTREGADO" }
+
+### Enviar
+PATCH http://localhost:8080/api/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "ENVIADO" }
+
+### Entregar
+PATCH http://localhost:8080/api/pedidos/1/estado
+Content-Type: application/json
+
+{ "estado": "ENTREGADO" }
+
+### Cancelar (probalo con otro pedido PENDIENTE: devuelve el stock)
+PATCH http://localhost:8080/api/pedidos/2/estado
+Content-Type: application/json
+
+{ "estado": "CANCELADO" }
