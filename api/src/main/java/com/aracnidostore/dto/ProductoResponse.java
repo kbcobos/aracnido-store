@@ -1,19 +1,20 @@
 package com.aracnidostore.dto;
 
+import java.math.BigDecimal;
+
 import com.aracnidostore.model.Producto;
 
 /**
  * JSON que SALE al consultar un producto. Devuelve el id de la categoría
  * y su nombre ya resueltos, en vez de la entidad Categoria completa:
  * así el frontend muestra la categoría sin pedir nada más, y evitamos
- * exponer las entidades JPA directamente (con sus relaciones y proxies
- * lazy, que dan problemas al convertirse a JSON).
+ * exponer las entidades JPA directamente.
  */
 public record ProductoResponse(
         Long id,
         String nombre,
         String descripcion,
-        double precio,
+        BigDecimal precio,
         int stock,
         String imagenUrl,
         Long categoriaId,

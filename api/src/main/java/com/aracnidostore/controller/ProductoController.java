@@ -1,5 +1,6 @@
 package com.aracnidostore.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aracnidostore.dto.ProductoConCategoria;
 import com.aracnidostore.dto.ProductoRequest;
 import com.aracnidostore.dto.ProductoResponse;
 import com.aracnidostore.model.Producto;
@@ -32,30 +34,53 @@ public class ProductoController {
         this.service = service;
     }
 
-    // GET /api/productos            -> todos
-    // GET /api/productos?nombre=web -> filtra por nombre
     @GetMapping
     public List<ProductoResponse> listar(@RequestParam(required = false) String nombre) {
         List<Producto> productos = (nombre == null || nombre.isBlank())
                 ? service.listar()
                 : service.buscarPorNombre(nombre);
-        return productos.stream().map(ProductoResponse::from).toList();
+        return aRespuesta(productos);
     }
 
-    // GET /api/productos/stock-bajo            -> usa el mínimo configurado (5)
-    // GET /api/productos/stock-bajo?limite=10  -> stock <= 10, el más escaso primero
+    @GetMapping(params = { "min", "max" })
+    public List<ProductoResponse> buscarPorPrecio(@RequestParam BigDecimal min,
+                                                  @RequestParam BigDecimal max) {
+        return aRespuesta(service.buscarPorPrecio(min, max));
+    }
+
+    @GetMapping(params = "orden")
+    public List<ProductoResponse> listarOrdenados(@RequestParam String orden) {
+        if (!orden.equals("precio")) {
+            throw new IllegalArgumentException("Orden no soportado: " + orden);
+        }
+        return aRespuesta(service.listarPorPrecioDescendente());
+    }
+
     @GetMapping("/stock-bajo")
     public List<ProductoResponse> stockBajo(@RequestParam(required = false) Integer limite) {
-        return service.stockBajo(limite).stream().map(ProductoResponse::from).toList();
+        return aRespuesta(service.stockBajo(limite));
     }
 
-    // GET /api/productos/1
+    @GetMapping("/categoria/{categoria}")
+    public List<ProductoResponse> listarPorCategoria(@PathVariable String categoria) {
+        return aRespuesta(service.listarPorNombreDeCategoria(categoria));
+    }
+
+    @GetMapping("/valor-inventario")
+    public BigDecimal valorInventario() {
+        return service.calcularValorInventario();
+    }
+
+    @GetMapping("/con-categoria")
+    public List<ProductoConCategoria> listarConCategoria() {
+        return service.listarConCategoria();
+    }
+
     @GetMapping("/{id}")
     public ProductoResponse obtener(@PathVariable Long id) {
         return ProductoResponse.from(service.obtener(id));
     }
 
-    // POST /api/productos -> 201 Created + header Location
     @PostMapping
     public ResponseEntity<ProductoResponse> crear(@Valid @RequestBody ProductoRequest req) {
         Producto creado = service.crear(req);
@@ -63,17 +88,19 @@ public class ProductoController {
                 .body(ProductoResponse.from(creado));
     }
 
-    // PUT /api/productos/1
     @PutMapping("/{id}")
     public ProductoResponse actualizar(@PathVariable Long id,
                                        @Valid @RequestBody ProductoRequest req) {
         return ProductoResponse.from(service.actualizar(id, req));
     }
 
-    // DELETE /api/productos/1 -> 204 No Content
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         service.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    private List<ProductoResponse> aRespuesta(List<Producto> productos) {
+        return productos.stream().map(ProductoResponse::from).toList();
     }
 }

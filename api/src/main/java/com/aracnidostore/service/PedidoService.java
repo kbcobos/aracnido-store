@@ -27,9 +27,7 @@ import com.aracnidostore.repository.ProductoRepository;
 import com.aracnidostore.repository.UsuarioRepository;
 
 /**
- * Lógica de pedidos. Devuelve PedidoResponse (DTO) y no la entidad: el
- * armado del DTO ocurre dentro de la transacción, cuando las relaciones
- * lazy (usuario, productos) todavía se pueden leer.
+ * Lógica de pedidos. Devuelve PedidoResponse (DTO) y no la entidad.
  */
 @Service
 public class PedidoService {
@@ -51,12 +49,6 @@ public class PedidoService {
         this.stockMinimo = stockMinimo;
     }
 
-    /**
-     * Crea un pedido PENDIENTE y descuenta el stock (como pide la consigna).
-     * Es todo-o-nada: si un producto no existe o no alcanza el stock, se
-     * lanza una excepción y @Transactional deshace todo, incluidos los
-     * descuentos de stock ya hechos a los productos anteriores.
-     */
     @Transactional
     public PedidoResponse crear(PedidoRequest req) {
         Usuario usuario = usuarioRepository.findById(req.usuarioId())
@@ -75,8 +67,8 @@ public class PedidoService {
                 throw new StockInsuficienteException(producto.getNombre(), producto.getStock(), cantidad);
             }
             producto.setStock(producto.getStock() - cantidad);
-            if (producto.getStock() <= stockMinimo) {
-                // Alerta por consola cuando el stock llega al mínimo.
+            if (producto.getStock() < stockMinimo) {
+                // Alerta por consola cuando el stock queda por debajo del mínimo.
                 log.warn("ALERTA stock bajo: '{}' quedó con {} unidades (mínimo {})",
                         producto.getNombre(), producto.getStock(), stockMinimo);
             }

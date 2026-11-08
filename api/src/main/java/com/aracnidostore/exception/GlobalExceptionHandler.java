@@ -57,8 +57,13 @@ public class GlobalExceptionHandler {
         return construir(HttpStatus.CONFLICT, ex.getMessage(), null);
     }
 
-    @ExceptionHandler(RecursoDuplicadoException.class)
-    public ResponseEntity<ErrorResponse> duplicado(RecursoDuplicadoException ex) {
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> argumentoInvalido(IllegalArgumentException ex) {
+        return construir(HttpStatus.BAD_REQUEST, ex.getMessage(), null);
+    }
+
+    @ExceptionHandler({ RecursoDuplicadoException.class, ProductoDuplicadoException.class })
+    public ResponseEntity<ErrorResponse> duplicado(RuntimeException ex) {
         return construir(HttpStatus.CONFLICT, ex.getMessage(), null);
     }
 

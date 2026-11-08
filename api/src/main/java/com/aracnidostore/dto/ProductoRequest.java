@@ -1,5 +1,8 @@
 package com.aracnidostore.dto;
 
+import java.math.BigDecimal;
+
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -7,13 +10,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 
 /**
- * JSON que ENTRA al crear o actualizar un producto. Coincide con el
- * ejemplo de la consigna:
- *
- *   { "nombre": "Café Premium", "descripcion": "Café colombiano tostado",
- *     "precio": 12.50, "categoriaId": 3, "imagenUrl": "http://...", "stock": 100 }
- *
- * No tiene "id" (lo asigna MySQL) ni la categoría completa (solo su id).
+ * JSON que ENTRA al crear o actualizar un producto.
  */
 public record ProductoRequest(
 
@@ -26,7 +23,8 @@ public record ProductoRequest(
 
         @NotNull(message = "El precio es obligatorio")
         @Positive(message = "El precio debe ser mayor a 0")
-        Double precio,
+        @Digits(integer = 8, fraction = 2, message = "El precio admite hasta 8 enteros y 2 decimales")
+        BigDecimal precio,
 
         @NotNull(message = "El stock es obligatorio")
         @PositiveOrZero(message = "El stock no puede ser negativo")

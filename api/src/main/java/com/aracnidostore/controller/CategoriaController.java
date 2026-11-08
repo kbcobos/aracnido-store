@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aracnidostore.dto.CategoriaRequest;
 import com.aracnidostore.dto.CategoriaResponse;
+import com.aracnidostore.dto.ProductoResponse;
 import com.aracnidostore.model.Categoria;
 import com.aracnidostore.service.CategoriaService;
+import com.aracnidostore.service.ProductoService;
 
 import jakarta.validation.Valid;
 
@@ -26,9 +28,11 @@ import jakarta.validation.Valid;
 public class CategoriaController {
 
     private final CategoriaService service;
+    private final ProductoService productoService;
 
-    public CategoriaController(CategoriaService service) {
+    public CategoriaController(CategoriaService service, ProductoService productoService) {
         this.service = service;
+        this.productoService = productoService;
     }
 
     @GetMapping
@@ -39,6 +43,12 @@ public class CategoriaController {
     @GetMapping("/{id}")
     public CategoriaResponse obtener(@PathVariable Long id) {
         return CategoriaResponse.from(service.obtener(id));
+    }
+
+    @GetMapping("/{id}/productos")
+    public List<ProductoResponse> listarProductos(@PathVariable Long id) {
+        return productoService.listarPorCategoriaId(id).stream()
+                .map(ProductoResponse::from).toList();
     }
 
     @PostMapping

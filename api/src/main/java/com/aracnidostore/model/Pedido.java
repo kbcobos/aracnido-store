@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +45,6 @@ public class Pedido {
     @Column(nullable = false, length = 20)
     private EstadoPedido estado;
 
-    // Un pedido tiene muchas líneas. "mappedBy = pedido"
-    // significa que la clave foránea vive en la tabla de líneas (columna
-    // pedido_id), no en esta. cascade = ALL: al guardar el pedido se
-    // guardan sus líneas, y al borrarlo se borran.
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LineaPedido> lineas = new ArrayList<>();
 
@@ -75,10 +72,10 @@ public class Pedido {
     /**
      * Suma el subtotal de cada línea: el costo total del pedido.
      */
-    public double calcularTotal() {
-        double total = 0;
+    public BigDecimal calcularTotal() {
+        BigDecimal total = BigDecimal.ZERO;
         for (LineaPedido linea : lineas) {
-            total += linea.getSubtotal();
+            total = total.add(linea.getSubtotal());
         }
         return total;
     }

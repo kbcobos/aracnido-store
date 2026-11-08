@@ -1,5 +1,7 @@
 package com.aracnidostore.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,8 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 /**
- * Un ítem dentro de un Pedido: un producto y la cantidad pedida. Acá
- * se guarda el precio unitario del momento de la compra
+ * Un ítem dentro de un Pedido: un producto y la cantidad pedida.
+ * Acá se guarda el precio unitario del momento de la compra
  * (precioUnitario). Si mañana el producto sube de precio, los pedidos
  * viejos tienen que seguir mostrando lo que realmente se cobró; en un
  * historial de pedidos eso es lo correcto.
@@ -25,8 +27,6 @@ public class LineaPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Lado "dueño" de la relación con Pedido: acá vive la clave foránea
-    // pedido_id (el otro lado es Pedido.lineas, con mappedBy).
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
@@ -38,8 +38,8 @@ public class LineaPedido {
     @Column(nullable = false)
     private int cantidad;
 
-    @Column(name = "precio_unitario", nullable = false)
-    private double precioUnitario;
+    @Column(name = "precio_unitario", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioUnitario;
 
     public LineaPedido() {
     }
@@ -51,8 +51,8 @@ public class LineaPedido {
         this.precioUnitario = producto.getPrecio();
     }
 
-    public double getSubtotal() {
-        return precioUnitario * cantidad;
+    public BigDecimal getSubtotal() {
+        return precioUnitario.multiply(BigDecimal.valueOf(cantidad));
     }
 
     public Long getId() {
@@ -87,11 +87,11 @@ public class LineaPedido {
         this.cantidad = cantidad;
     }
 
-    public double getPrecioUnitario() {
+    public BigDecimal getPrecioUnitario() {
         return precioUnitario;
     }
 
-    public void setPrecioUnitario(double precioUnitario) {
+    public void setPrecioUnitario(BigDecimal precioUnitario) {
         this.precioUnitario = precioUnitario;
     }
 }

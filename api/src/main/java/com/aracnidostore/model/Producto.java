@@ -1,5 +1,7 @@
 package com.aracnidostore.model;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -28,9 +30,8 @@ public class Producto {
     @Column(length = 500)
     private String descripcion;
 
-    // double, como pide la consigna para los precios.
-    @Column(nullable = false)
-    private double precio;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precio;
 
     @Column(nullable = false)
     private int stock;
@@ -38,10 +39,6 @@ public class Producto {
     @Column(name = "imagen_url", length = 500)
     private String imagenUrl;
 
-    // Muchos productos pertenecen a una categoría.
-    // En la tabla productos se guarda una columna categoria_id con el id de la
-    // categoría. LAZY = no se carga la categoría hasta
-    // que alguien la pide, así listar productos no hace consultas de más.
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
@@ -49,7 +46,7 @@ public class Producto {
     public Producto() {
     }
 
-    public Producto(String nombre, String descripcion, double precio, int stock,
+    public Producto(String nombre, String descripcion, BigDecimal precio, int stock,
                     String imagenUrl, Categoria categoria) {
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -83,11 +80,11 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
-    public double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 

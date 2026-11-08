@@ -56,3 +56,42 @@ GET http://localhost:8080/api/productos/stock-bajo
 
 ### Alerta con límite propio
 GET http://localhost:8080/api/productos/stock-bajo?limite=10
+
+### Rango de precios (min y max)
+GET http://localhost:8080/api/productos?min=5000&max=40000
+
+### Rango inválido: min mayor que max (400)
+GET http://localhost:8080/api/productos?min=40000&max=5000
+
+### Ordenados por precio, de mayor a menor
+GET http://localhost:8080/api/productos?orden=precio
+
+### Orden no soportado (400)
+GET http://localhost:8080/api/productos?orden=nombre
+
+### Productos de una categoría por nombre (no distingue mayúsculas)
+GET http://localhost:8080/api/productos/categoria/Trajes
+
+### Productos de una categoría por id
+GET http://localhost:8080/api/categorias/1/productos
+
+### Categoría inexistente (404)
+GET http://localhost:8080/api/categorias/999/productos
+
+### Valor total del inventario (suma de precio * stock)
+GET http://localhost:8080/api/productos/valor-inventario
+
+### Lista plana con el nombre de la categoría
+GET http://localhost:8080/api/productos/con-categoria
+
+### Nombre repetido (409): ya existe "Máscara Arácnida" (también en minúsculas)
+POST http://localhost:8080/api/productos
+Content-Type: application/json
+
+{
+  "nombre": "máscara arácnida",
+  "descripcion": "repetida",
+  "precio": 1000,
+  "stock": 1,
+  "categoriaId": 1
+}

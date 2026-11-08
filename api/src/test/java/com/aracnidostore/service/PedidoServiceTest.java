@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,7 +56,7 @@ class PedidoServiceTest {
     }
 
     private Producto producto(Long id, double precio, int stock) {
-        Producto p = new Producto("Producto " + id, "desc", precio, stock, null, null);
+        Producto p = new Producto("Producto " + id, "desc", BigDecimal.valueOf(precio), stock, null, null);
         p.setId(id);
         return p;
     }
@@ -71,7 +72,7 @@ class PedidoServiceTest {
 
         assertEquals(7, p.getStock());
         assertEquals(EstadoPedido.PENDIENTE, r.estado());
-        assertEquals(135000.0, r.total());
+        assertEquals(0, new BigDecimal("135000").compareTo(r.total()));
         assertEquals(1, r.items().size());
     }
 

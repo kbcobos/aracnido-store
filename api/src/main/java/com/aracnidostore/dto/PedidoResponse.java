@@ -1,5 +1,6 @@
 package com.aracnidostore.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public record PedidoResponse(
         String usuarioNombre,
         LocalDateTime fecha,
         EstadoPedido estado,
-        double total,
+        BigDecimal total,
         List<LineaPedidoResponse> items
 ) {
     public static PedidoResponse from(Pedido p) {

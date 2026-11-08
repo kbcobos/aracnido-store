@@ -1,5 +1,6 @@
 package com.aracnidostore.config;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
@@ -31,15 +32,15 @@ public class DataLoader {
 
             productos.saveAll(List.of(
                 new Producto("Lanzarredes Mecánico", "Lanzarredes de muñeca con cartuchos recargables",
-                        45000.0, 15, null, gadgets),
+                        new BigDecimal("45000.00"), 15, null, gadgets),
                 new Producto("Traje Arácnido Clásico", "Traje rojo y azul, talle ajustable",
-                        89000.0, 8, null, trajes),
+                        new BigDecimal("89000.00"), 8, null, trajes),
                 new Producto("Máscara Arácnida", "Máscara con lentes ajustables",
-                        22000.0, 20, null, trajes),
+                        new BigDecimal("22000.00"), 20, null, trajes),
                 new Producto("Cartucho de Telaraña x3", "Pack de 3 cartuchos de repuesto",
-                        9500.0, 3, null, gadgets),
+                        new BigDecimal("9500.00"), 3, null, gadgets),
                 new Producto("Figura Coleccionable Arácnido", "Figura articulada de 30 cm",
-                        35000.0, 12, null, coleccion)
+                        new BigDecimal("35000.00"), 12, null, coleccion)
             ));
             System.out.println(">>> Datos de ejemplo cargados (3 categorías, 5 productos)");
         };
