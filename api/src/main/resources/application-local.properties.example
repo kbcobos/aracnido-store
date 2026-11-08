@@ -1,0 +1,6 @@
+# Copiá este archivo con el nombre  application-local.properties
+# (en esta misma carpeta) y reemplazá el valor por la contraseña de tu
+# usuario root de MySQL, sin comillas ni espacios.
+#
+# application-local.properties está en el .gitignore: nunca se sube a GitHub.
+spring.datasource.password=TU_CONTRASEÑA_DE_MYSQL
